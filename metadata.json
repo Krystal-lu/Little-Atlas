@@ -1,0 +1,6 @@
+{
+  "name": "Little Atlas",
+  "description": "Keep the places that became memories. A calm, personal travel-memory archive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
