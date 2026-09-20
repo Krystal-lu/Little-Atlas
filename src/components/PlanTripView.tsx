@@ -130,8 +130,11 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
       }
 
       if (!response.ok || !data || data.success === false) {
-        if (data?.code === 'NO_API_KEY' || response.status === 503) {
-          throw new Error(data?.error || 'Trip planning is temporarily unavailable.');
+        if (data?.code === 'NO_API_KEY') {
+          throw new Error(data?.error || 'Trip planning is temporarily unavailable. Missing Gemini API key.');
+        }
+        if (response.status === 503 || data?.error?.includes('high demand') || data?.details?.includes('high demand')) {
+          throw new Error('AI models are experiencing temporary high demand. Please wait a moment and try again.');
         }
         throw new Error(
           data?.error || 'We couldn’t create your trip plan right now. Please try again.'
@@ -193,8 +196,11 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
       }
 
       if (!response.ok || !data || data.success === false) {
-        if (data?.code === 'NO_API_KEY' || response.status === 503) {
-          throw new Error(data?.error || 'Trip planning is temporarily unavailable.');
+        if (data?.code === 'NO_API_KEY') {
+          throw new Error(data?.error || 'Trip planning is temporarily unavailable. Missing Gemini API key.');
+        }
+        if (response.status === 503 || data?.error?.includes('high demand') || data?.details?.includes('high demand')) {
+          throw new Error('AI models are experiencing temporary high demand. Please wait a moment and try again.');
         }
         throw new Error(
           data?.error || 'We couldn’t update your trip plan right now. Please try again.'

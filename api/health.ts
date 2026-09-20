@@ -10,13 +10,12 @@ export default async function handler(req: any, res: any) {
     return res.end();
   }
 
-  const key = process.env.GEMINI_API_KEY;
-  const keyAvailable = Boolean(key && key.trim() !== '');
+  const geminiKey = process.env.GEMINI_API_KEY;
 
   const data = {
     status: 'ok',
-    hasGeminiKey: keyAvailable,
-    environment: 'production',
+    hasGeminiKey: Boolean(process.env.GEMINI_API_KEY?.trim()),
+    environment: process.env.VERCEL_ENV || process.env.NODE_ENV || 'unknown',
   };
 
   if (res.status && typeof res.json === 'function') {

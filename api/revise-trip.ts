@@ -80,29 +80,45 @@ Your style guidelines:
 4. Tone: Warm, evocative, personal, and poetic yet entirely realistic. Like notes handwritten into a personal clothbound travel journal.`;
 
 const CANDIDATE_MODELS = [
-  'gemini-3.1-flash-lite',
   'gemini-3.8-flash',
-  'gemini-3.6-flash',
   'gemini-flash-latest',
+  'gemini-3.5-flash',
+  'gemini-3-flash-preview',
+  'gemini-3.1-flash-lite',
+  'gemini-3.6-flash',
 ];
 
 async function callWithFallback(ai: GoogleGenAI, prompt: string, config: any): Promise<string> {
   let lastError: any = null;
+
+  // Attempt across candidate models with brief retry for transient 503 high-demand spikes
   for (const model of CANDIDATE_MODELS) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-        config,
-      });
-      if (response.text) {
-        return response.text;
+    const maxRetries = 2;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: prompt,
+          config,
+        });
+        if (response.text) {
+          return response.text;
+        }
+      } catch (err: any) {
+        lastError = err;
+        const is503 = err?.status === 503 || err?.message?.includes('503') || err?.message?.includes('UNAVAILABLE') || err?.message?.includes('high demand');
+        
+        if (is503 && attempt < maxRetries - 1) {
+          // Quick backoff before retrying this model
+          await new Promise((resolve) => setTimeout(resolve, 600 * (attempt + 1)));
+          continue;
+        }
+        console.warn(`Model ${model} failed, moving to next candidate...`, err?.message || err);
+        break;
       }
-    } catch (err: any) {
-      console.warn(`Model ${model} failed, attempting next candidate...`, err?.message || err);
-      lastError = err;
     }
   }
+
   throw lastError || new Error('All candidate models failed.');
 }
 
@@ -171,8 +187,8 @@ export default async function handler(req: any, res: any) {
     });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || !apiKey.trim()) {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey || !geminiKey.trim()) {
     return sendJson(res, 503, {
       success: false,
       error: 'Trip planning is temporarily unavailable. Missing Gemini API key.',
@@ -198,7 +214,7 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
+    const ai = new GoogleGenAI({ apiKey: geminiKey.trim() });
 
     const prompt = `You are revising an existing travel itinerary for Little Atlas according to the traveler's request.
 
@@ -252,9 +268,23 @@ REVISION INSTRUCTIONS:
   } catch (err: any) {
     console.error('Revise trip error:', err);
 
-    return sendJson(res, 500, {
+    const is429 = err?.status === 429 || err?.message?.includes('429') || err?.message?.includes('RESOURCE_EXHAUSTED') || err?.message?.includes('quota');
+    const isHighDemand = err?.status === 503 || err?.message?.includes('503') || err?.message?.includes('UNAVAILABLE') || err?.message?.includes('high demand');
+    
+    let statusCode = 500;
+    let errorMessage = 'Unable to update your trip plan right now. Please try again.';
+
+    if (is429) {
+      statusCode = 429;
+      errorMessage = 'Gemini API request limit reached. Please wait a minute or try again shortly.';
+    } else if (isHighDemand) {
+      statusCode = 503;
+      errorMessage = 'AI models are currently experiencing high demand. Please try again in a moment.';
+    }
+
+    return sendJson(res, statusCode, {
       success: false,
-      error: 'Unable to update your trip plan right now. Please try again.',
+      error: errorMessage,
       details: err?.message || 'Internal error',
     });
   }
