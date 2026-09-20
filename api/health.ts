@@ -1,19 +1,17 @@
-import { hasGeminiKey } from './_lib/geminiService';
-
 export default async function handler(req: any, res: any) {
-  // Allow GET and OPTIONS
+  // CORS / Preflight handling
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    if (res.status) {
-      return res.status(204).end();
-    }
+    if (res.status) return res.status(204).end();
     res.statusCode = 204;
     return res.end();
   }
 
-  const keyAvailable = hasGeminiKey();
+  const key = process.env.GEMINI_API_KEY;
+  const keyAvailable = Boolean(key && key.trim() !== '');
 
   const data = {
     status: 'ok',

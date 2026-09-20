@@ -1,15 +1,139 @@
-import { generateTripPlan, hasGeminiKey, PlanTripInput } from './_lib/geminiService';
+import { GoogleGenAI, Type } from '@google/genai';
+
+export interface PlanTripInput {
+  destination: string;
+  daysCount: number;
+  pace: 'relaxed' | 'balanced' | 'packed';
+  interests: string[];
+  budget: 'budget' | 'moderate' | 'premium';
+  additionalPreferences?: string;
+}
+
+export interface DayItinerary {
+  dayNumber: number;
+  neighborhoodOrArea: string;
+  theme?: string;
+  morning: string;
+  lunch: string;
+  afternoon: string;
+  evening: string;
+  notes?: string;
+}
+
+export interface TripPlanResult {
+  id: string;
+  destination: string;
+  daysCount: number;
+  pace: 'relaxed' | 'balanced' | 'packed';
+  interests: string[];
+  budget: 'budget' | 'moderate' | 'premium';
+  overview: string;
+  days: DayItinerary[];
+}
+
+const itineraryResponseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    destination: { type: Type.STRING },
+    overview: {
+      type: Type.STRING,
+      description: 'A 2-3 sentence gentle, evocative introduction to this journey.',
+    },
+    days: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          dayNumber: { type: Type.INTEGER },
+          neighborhoodOrArea: {
+            type: Type.STRING,
+            description: 'The specific neighborhood or district for this day.',
+          },
+          theme: {
+            type: Type.STRING,
+            description: 'A brief 2-4 word mood or theme, e.g. Old Quarter & canals.',
+          },
+          morning: {
+            type: Type.STRING,
+            description: 'Morning exploration or cafe note with gentle suggestion wording.',
+          },
+          lunch: {
+            type: Type.STRING,
+            description: 'Lunch idea or culinary note.',
+          },
+          afternoon: {
+            type: Type.STRING,
+            description: 'Afternoon wandering, shop, park, or gallery.',
+          },
+          evening: {
+            type: Type.STRING,
+            description: 'Evening stroll, dinner, or quiet vista.',
+          },
+          notes: {
+            type: Type.STRING,
+            description: 'A quiet practical tip or local custom.',
+          },
+        },
+        required: ['dayNumber', 'neighborhoodOrArea', 'morning', 'lunch', 'afternoon', 'evening'],
+      },
+    },
+  },
+  required: ['destination', 'overview', 'days'],
+};
+
+const SYSTEM_INSTRUCTION = `You are the thoughtful itinerary curator for "Little Atlas", a quiet, personal travel companion.
+Your style guidelines:
+1. Focus on coherence and sense of place. Group each day within one or two adjacent walkable neighborhoods so the traveler does not spend all day commuting.
+2. Use respectful, gentle language ("Consider", "Possible option", "Worth checking", "You might wander toward").
+3. Avoid generic tourist checklist clichés. Include independent bookshops, artisan studios, quiet temple alleys, tucked-away tea houses, river walks, and neighborhood bakeries.
+4. Respect traveler pace:
+   - Relaxed: 1 primary area, unhurried meals, spacious downtime.
+   - Balanced: 2 connected neighborhoods, steady rhythm.
+   - Packed: full day from early morning to late evening without being physically impossible.
+5. Tone:
+   - Warm, evocative, personal, and poetic yet entirely realistic. Like notes handwritten into a personal clothbound travel journal.
+   - Never use marketing hype or buzzwords.`;
+
+const CANDIDATE_MODELS = [
+  'gemini-3.1-flash-lite',
+  'gemini-3.8-flash',
+  'gemini-3.6-flash',
+  'gemini-flash-latest',
+];
+
+async function callWithFallback(ai: GoogleGenAI, prompt: string, config: any): Promise<string> {
+  let lastError: any = null;
+  for (const model of CANDIDATE_MODELS) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config,
+      });
+      if (response.text) {
+        return response.text;
+      }
+    } catch (err: any) {
+      console.warn(`Model ${model} failed, attempting next candidate...`, err?.message || err);
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('All candidate models failed.');
+}
 
 async function parseBody(req: any): Promise<any> {
   if (req.body && typeof req.body === 'object') {
     return req.body;
   }
-  if (typeof req.body === 'string') {
+  if (typeof req.body === 'string' && req.body.trim()) {
     try {
       return JSON.parse(req.body);
     } catch {
       return {};
     }
+  }
+  if (req.readableEnded) {
+    return {};
   }
   return new Promise((resolve) => {
     let data = '';
@@ -24,39 +148,51 @@ async function parseBody(req: any): Promise<any> {
       }
     });
     req.on('error', () => resolve({}));
+    setTimeout(() => {
+      try {
+        resolve(data ? JSON.parse(data) : {});
+      } catch {
+        resolve({});
+      }
+    }, 1500);
   });
+}
+
+function sendJson(res: any, statusCode: number, data: any) {
+  if (res.status && typeof res.json === 'function') {
+    return res.status(statusCode).json(data);
+  }
+  res.statusCode = statusCode;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(data));
 }
 
 export default async function handler(req: any, res: any) {
   // CORS / Preflight
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    if (res.status) {
-      return res.status(204).end();
-    }
+    if (res.status) return res.status(204).end();
     res.statusCode = 204;
     return res.end();
   }
 
   if (req.method !== 'POST') {
-    const errorBody = { error: 'Method not allowed. Use POST.' };
-    if (res.status) return res.status(405).json(errorBody);
-    res.statusCode = 405;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify(errorBody));
+    return sendJson(res, 405, {
+      success: false,
+      error: 'Method not allowed. Please use POST.',
+    });
   }
 
-  if (!hasGeminiKey()) {
-    const errorBody = {
-      error: 'Trip planning is temporarily unavailable.',
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || !apiKey.trim()) {
+    return sendJson(res, 503, {
+      success: false,
+      error: 'Trip planning is temporarily unavailable. Missing Gemini API key.',
       code: 'NO_API_KEY',
-    };
-    if (res.status) return res.status(503).json(errorBody);
-    res.statusCode = 503;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify(errorBody));
+    });
   }
 
   try {
@@ -64,11 +200,10 @@ export default async function handler(req: any, res: any) {
     const { destination, daysCount, pace, interests, budget, additionalPreferences } = body;
 
     if (!destination || typeof destination !== 'string' || !destination.trim()) {
-      const errorBody = { error: 'Destination is required.' };
-      if (res.status) return res.status(400).json(errorBody);
-      res.statusCode = 400;
-      res.setHeader('Content-Type', 'application/json');
-      return res.end(JSON.stringify(errorBody));
+      return sendJson(res, 400, {
+        success: false,
+        error: 'Please provide a destination for your trip.',
+      });
     }
 
     const input: PlanTripInput = {
@@ -80,36 +215,56 @@ export default async function handler(req: any, res: any) {
       additionalPreferences: additionalPreferences ? String(additionalPreferences).trim() : undefined,
     };
 
-    const plan = await generateTripPlan(input);
+    const ai = new GoogleGenAI({ apiKey: apiKey.trim() });
 
-    const responseBody = { plan };
-    if (res.status && typeof res.json === 'function') {
-      return res.status(200).json(responseBody);
-    }
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify(responseBody));
+    const prompt = `Create a cohesive, thoughtfully curated ${input.daysCount}-day travel plan for:
+Destination: ${input.destination}
+Desired Pace: ${input.pace} (e.g. relaxed = single neighborhood + deep pauses, balanced = moderate rhythm, packed = dawn till dusk)
+Interests: ${input.interests.length > 0 ? input.interests.join(', ') : 'Local culture, neighborhood wandering, thoughtful food'}
+Budget Tier: ${input.budget}
+${input.additionalPreferences ? `Special Traveler Preferences: "${input.additionalPreferences}"` : ''}
+
+Create exactly ${input.daysCount} days in the itinerary. Group each day around a specific district or neighborhood.`;
+
+    const text = await callWithFallback(ai, prompt, {
+      systemInstruction: SYSTEM_INSTRUCTION,
+      responseMimeType: 'application/json',
+      responseSchema: itineraryResponseSchema,
+    });
+
+    const parsed = JSON.parse(text);
+    const plan: TripPlanResult = {
+      id: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      destination: parsed.destination || input.destination,
+      daysCount: input.daysCount,
+      pace: input.pace,
+      interests: input.interests,
+      budget: input.budget,
+      overview: parsed.overview || `A curated journey through ${input.destination}.`,
+      days: (parsed.days || []).map((d: any, idx: number) => ({
+        dayNumber: d.dayNumber || idx + 1,
+        neighborhoodOrArea: d.neighborhoodOrArea || 'Central District',
+        theme: d.theme || undefined,
+        morning: d.morning || '',
+        lunch: d.lunch || '',
+        afternoon: d.afternoon || '',
+        evening: d.evening || '',
+        notes: d.notes || undefined,
+      })),
+    };
+
+    return sendJson(res, 200, {
+      success: true,
+      itinerary: plan,
+      plan,
+    });
   } catch (err: any) {
     console.error('Plan trip error:', err);
 
-    if (err?.code === 'NO_API_KEY') {
-      const errorBody = {
-        error: 'Trip planning is temporarily unavailable.',
-        code: 'NO_API_KEY',
-      };
-      if (res.status) return res.status(503).json(errorBody);
-      res.statusCode = 503;
-      res.setHeader('Content-Type', 'application/json');
-      return res.end(JSON.stringify(errorBody));
-    }
-
-    const errorBody = {
-      error: 'We couldn’t create your trip plan right now. Please try again.',
-      details: err?.message || 'Unknown error',
-    };
-    if (res.status) return res.status(500).json(errorBody);
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    return res.end(JSON.stringify(errorBody));
+    return sendJson(res, 500, {
+      success: false,
+      error: 'Unable to create trip plan right now. Please try again.',
+      details: err?.message || 'Internal error',
+    });
   }
 }

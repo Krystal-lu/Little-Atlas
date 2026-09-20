@@ -116,27 +116,39 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
         }),
       });
 
-      const data = await response.json();
+      let data: any = null;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch {
+          data = null;
+        }
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response from server:', text);
+      }
 
-      if (!response.ok) {
-        if (data.code === 'NO_API_KEY' || response.status === 503) {
-          throw new Error('Trip planning is temporarily unavailable.');
+      if (!response.ok || !data || data.success === false) {
+        if (data?.code === 'NO_API_KEY' || response.status === 503) {
+          throw new Error(data?.error || 'Trip planning is temporarily unavailable.');
         }
         throw new Error(
-          data.error || 'We couldn’t create your trip plan right now. Please try again.'
+          data?.error || 'We couldn’t create your trip plan right now. Please try again.'
         );
       }
 
-      if (data.plan) {
-        setCurrentPlan(data.plan);
+      const plan = data.itinerary || data.plan;
+      if (plan) {
+        setCurrentPlan(plan);
         setIsSaved(false);
       } else {
         throw new Error('We couldn’t create your trip plan right now. Please try again.');
       }
     } catch (err: any) {
       console.error('Plan trip request failed:', err);
-      if (err.message && err.message.includes('temporarily unavailable')) {
-        setErrorMessage('Trip planning is temporarily unavailable.');
+      if (err.message) {
+        setErrorMessage(err.message);
       } else {
         setErrorMessage('We couldn’t create your trip plan right now. Please try again.');
       }
@@ -167,30 +179,42 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
         }),
       });
 
-      const data = await response.json();
+      let data: any = null;
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch {
+          data = null;
+        }
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response from server during revision:', text);
+      }
 
-      if (!response.ok) {
-        if (data.code === 'NO_API_KEY' || response.status === 503) {
-          throw new Error('Trip planning is temporarily unavailable.');
+      if (!response.ok || !data || data.success === false) {
+        if (data?.code === 'NO_API_KEY' || response.status === 503) {
+          throw new Error(data?.error || 'Trip planning is temporarily unavailable.');
         }
         throw new Error(
-          data.error || 'We couldn’t create your trip plan right now. Please try again.'
+          data?.error || 'We couldn’t update your trip plan right now. Please try again.'
         );
       }
 
-      if (data.plan) {
-        setCurrentPlan(data.plan);
+      const plan = data.itinerary || data.plan;
+      if (plan) {
+        setCurrentPlan(plan);
         setRevisionInput('');
         setIsSaved(false);
       } else {
-        throw new Error('We couldn’t create your trip plan right now. Please try again.');
+        throw new Error('We couldn’t update your trip plan right now. Please try again.');
       }
     } catch (err: any) {
       console.error('Revision failed:', err);
-      if (err.message && err.message.includes('temporarily unavailable')) {
-        setErrorMessage('Trip planning is temporarily unavailable.');
+      if (err.message) {
+        setErrorMessage(err.message);
       } else {
-        setErrorMessage('We couldn’t create your trip plan right now. Please try again.');
+        setErrorMessage('We couldn’t update your trip plan right now. Please try again.');
       }
     } finally {
       setIsRevising(false);

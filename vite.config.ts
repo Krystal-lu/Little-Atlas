@@ -1,16 +1,18 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import express from 'express';
 import path from 'path';
 import { defineConfig, Plugin } from 'vite';
-import healthHandler from './api/health';
-import planTripHandler from './api/plan-trip';
-import reviseTripHandler from './api/revise-trip';
+import healthHandler from './api/health.ts';
+import planTripHandler from './api/plan-trip.ts';
+import reviseTripHandler from './api/revise-trip.ts';
 
 function devApiPlugin(): Plugin {
   return {
     name: 'dev-api-middleware',
     configureServer(server) {
-      server.middlewares.use(async (req, res, next) => {
+      server.middlewares.use(express.json());
+      server.middlewares.use((req, res, next) => {
         const url = req.url ? req.url.split('?')[0] : '';
         if (url === '/api/health') {
           return healthHandler(req, res);
