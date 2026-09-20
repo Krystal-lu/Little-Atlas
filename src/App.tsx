@@ -7,6 +7,7 @@ import { EmptyState } from './components/EmptyState';
 import { PrivacyView } from './components/PrivacyView';
 import { JourneysPlaceholder } from './components/JourneysPlaceholder';
 import { PostcardsPlaceholder } from './components/PostcardsPlaceholder';
+import { PlanTripView } from './components/PlanTripView';
 import { ManualAddModal } from './components/ManualAddModal';
 import { DuplicatePlaceModal } from './components/DuplicatePlaceModal';
 import { Place, Memory, ActiveTab, SearchResult } from './types';
@@ -645,7 +646,14 @@ export default function App() {
           </div>
         )}
 
-        {/* Tab 4: Privacy */}
+        {/* Tab 4: Plan Trip */}
+        {activeTab === 'plan-trip' && (
+          <div className="flex-1 overflow-y-auto bg-[#F7F2E7]">
+            <PlanTripView onGoToAtlas={() => setActiveTab('atlas')} />
+          </div>
+        )}
+
+        {/* Tab 5: Privacy */}
         {activeTab === 'privacy' && (
           <div className="flex-1 overflow-y-auto bg-[#F7F2E7]">
             <PrivacyView

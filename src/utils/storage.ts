@@ -1,10 +1,11 @@
-import { Place, Memory } from '../types';
+import { Place, Memory, TripPlan } from '../types';
 import { findMatchingPlace } from './placeMatching';
 import { saveMemoriesToIdb, getMemoriesFromIdb, clearIdb } from './indexedDb';
 
 export const PLACES_STORAGE_KEY = 'little_atlas_places_v2';
 export const MEMORIES_STORAGE_KEY = 'little_atlas_memories_v2';
 export const SAMPLE_ACTIVE_KEY = 'little_atlas_sample_active_v2';
+export const SAVED_PLANS_STORAGE_KEY = 'little_atlas_saved_plans_v1';
 
 const LEGACY_STORAGE_KEY_V1 = 'little_atlas_places_v1';
 const LEGACY_SAMPLE_KEY_V1 = 'little_atlas_sample_active_v1';
@@ -375,7 +376,69 @@ export function clearAllLocalData(): void {
   localStorage.removeItem(PLACES_STORAGE_KEY);
   localStorage.removeItem(MEMORIES_STORAGE_KEY);
   localStorage.removeItem(SAMPLE_ACTIVE_KEY);
+  localStorage.removeItem(SAVED_PLANS_STORAGE_KEY);
   localStorage.removeItem(LEGACY_STORAGE_KEY_V1);
   localStorage.removeItem(LEGACY_SAMPLE_KEY_V1);
   clearIdb().catch(() => {});
 }
+
+// ----------------------------------------------------------------------------
+// TRIP PLANS PERSISTENCE
+// ----------------------------------------------------------------------------
+
+export function getStoredPlans(): TripPlan[] {
+  try {
+    const raw = localStorage.getItem(SAVED_PLANS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to read saved trip plans from localStorage', err);
+  }
+  return [];
+}
+
+export function saveStoredPlans(plans: TripPlan[]): void {
+  try {
+    localStorage.setItem(SAVED_PLANS_STORAGE_KEY, JSON.stringify(plans));
+  } catch (err) {
+    console.error('Failed to save trip plans to localStorage', err);
+  }
+}
+
+export function savePlan(plan: TripPlan): TripPlan[] {
+  const current = getStoredPlans();
+  const existingIdx = current.findIndex((p) => p.id === plan.id);
+  let updated: TripPlan[];
+  if (existingIdx >= 0) {
+    updated = [...current];
+    updated[existingIdx] = { ...plan, updatedAt: new Date().toISOString() };
+  } else {
+    updated = [plan, ...current];
+  }
+  saveStoredPlans(updated);
+  return updated;
+}
+
+export function deleteStoredPlan(planId: string): TripPlan[] {
+  const current = getStoredPlans();
+  const filtered = current.filter((p) => p.id !== planId);
+  saveStoredPlans(filtered);
+  return filtered;
+}
+
+export function togglePlanUpcoming(planId: string): TripPlan[] {
+  const current = getStoredPlans();
+  const updated = current.map((p) => {
+    if (p.id === planId) {
+      return { ...p, isUpcoming: !p.isUpcoming };
+    }
+    return p;
+  });
+  saveStoredPlans(updated);
+  return updated;
+}
+

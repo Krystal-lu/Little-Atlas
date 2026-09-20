@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, BookOpen, Mail, Shield, Sparkles, Trash2, Plus } from 'lucide-react';
+import { Compass, BookOpen, Mail, Shield, Sparkles, Trash2, Plus, Calendar } from 'lucide-react';
 import { ActiveTab } from '../types';
 
 interface HeaderProps {
@@ -94,6 +94,19 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Mail className="w-3.5 h-3.5" />
           <span>Postcards</span>
+        </button>
+
+        <button
+          id="nav-tab-plan-trip"
+          onClick={() => onSelectTab('plan-trip')}
+          className={`flex items-center space-x-1.5 px-4 py-1.5 rounded-full text-xs font-medium transition-all duration-150 ${
+            activeTab === 'plan-trip'
+              ? 'bg-[#FCFAF5] text-[#2B2621] shadow-xs'
+              : 'text-[#6B6053] hover:text-[#2B2621]'
+          }`}
+        >
+          <Calendar className="w-3.5 h-3.5" />
+          <span>Plan Trip</span>
         </button>
       </nav>
 

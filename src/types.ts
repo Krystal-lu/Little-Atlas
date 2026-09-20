@@ -73,4 +73,44 @@ export interface Postcard {
   createdAt: string;
 }
 
-export type ActiveTab = 'atlas' | 'journeys' | 'postcards' | 'privacy';
+export type ActiveTab = 'atlas' | 'journeys' | 'postcards' | 'plan-trip' | 'privacy';
+
+export type TravelPace = 'relaxed' | 'balanced' | 'packed';
+export type TripBudget = 'budget' | 'moderate' | 'premium';
+
+export type TripInterest =
+  | 'Food'
+  | 'Shopping'
+  | 'Culture'
+  | 'Nature'
+  | 'Photography'
+  | 'Nightlife'
+  | 'Design'
+  | 'Local neighborhoods';
+
+export interface DayItinerary {
+  dayNumber: number;
+  neighborhoodOrArea: string;
+  theme?: string;
+  morning: string;
+  lunch: string;
+  afternoon: string;
+  evening: string;
+  notes?: string;
+}
+
+export interface TripPlan {
+  id: string;
+  destination: string;
+  daysCount: number;
+  pace: TravelPace;
+  interests: string[];
+  budget: TripBudget;
+  additionalPreferences?: string;
+  days: DayItinerary[];
+  overview?: string;
+  isUpcoming?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
