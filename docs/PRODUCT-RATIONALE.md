@@ -10,12 +10,12 @@ People who revisit places and keep personal travel photos, but lose the context 
 When I return from a visit, I want to attach a date and a few words to a photo so I can later find that particular moment without remembering its filename. A place is a reusable container; a memory is a dated visit/story. Planning is secondary and stays separate from lived memories.
 
 ## Decisions in this iteration
-- A persistent saved-place list makes memories reachable without discovering small globe pins. The globe remains an alternate spatial view.
+- A photo-led memory archive exposes each dated visit directly. Place, date and note sit beside the image; the globe is a secondary spatial view.
 - A timeline supports retrieval when a date is easier to recall than a location.
 - Date + story accompany the image. Another visit at the same destination creates a memory, not another destination.
 - Demo mode is labeled separately from the personal archive; demo edits are temporary.
 - No automatic globe rotation by default. Motion explains state changes, not background decoration.
-- White/neutral surfaces, one blue action color, 8px spacing rhythm, restrained 6–12px radii, system sans typography. Ant Design informs hierarchy and interaction; this is not an Ant Design component implementation or a claim of certification.
+- Neutral paper-like surfaces, dark green primary actions, restrained borders and system sans typography. Repeated dashboard cards and decorative hero copy were removed. Ant Design informs hierarchy and interaction; this is not an Ant Design component implementation or a claim of certification.
 - Visible keyboard focus, labeled fields, modal focus containment, Escape/return-to-trigger, reduced-motion support.
 
 ## Storage and commercial constraints

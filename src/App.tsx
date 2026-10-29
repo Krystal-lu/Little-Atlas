@@ -508,15 +508,15 @@ export default function App() {
       {/* Main Screen Body */}
       <main className="relative flex-1 w-full overflow-hidden flex flex-col">
         {activeTab === 'atlas' && (
-          <div className="atlas-workspace">
+          <div className="atlas-workspace archive-layout">
             <aside className="atlas-sidebar">
-              <span className="atlas-eyebrow">Places, people, passing moments</span>
-              <h1>Where the story stays.</h1>
-              <p>A photo keeps the view. Keep the date, the people, and the part you might forget.</p>
+              <span className="atlas-eyebrow">Personal archive</span>
+              <h1>Your memories</h1>
+              <p>Photos, dates and notes from your travels.</p>
               <button className="atlas-primary" onClick={() => {setManualInitialCoords(undefined);setManualInitialName('');setManualModalOpen(true);}}>+ Add a memory</button>
               {isSample && <div className="atlas-demo-note">Demo atlas · Try the flows here. Changes to these examples are not saved.</div>}
-              <div className="place-list-title"><span>Saved places</span><span>{savedPlacesWithMemories.length}</span></div>
-              {savedPlacesWithMemories.length ? savedPlacesWithMemories.map(place => <button className="atlas-place-row" key={place.id} aria-pressed={selectedPlaceId===place.id} onClick={() => {setTemporaryPreviewPlace(null);setTemporaryPin(null);setSelectedPlaceId(place.id);const list=memories.filter(m=>m.placeId===place.id);setSelectedMemoryId(list.length===1?list[0].id:undefined);}}>{memories.find(m=>m.placeId===place.id && m.coverImage)?.coverImage ? <img className="place-thumb" src={memories.find(m=>m.placeId===place.id && m.coverImage)!.coverImage} alt=""/> : <span className="place-thumb place-initial">{place.name.slice(0,1)}</span>}<span><strong>{place.name}</strong><small>{place.country} · {memories.filter(m=>m.placeId===place.id).length} {memories.filter(m=>m.placeId===place.id).length===1?'memory':'memories'}</small></span></button>) : <><p>No memories yet. Start with one place and a moment you want to keep.</p><button className="atlas-secondary" style={{marginTop:12}} onClick={handleToggleSample}>Explore a demo atlas ↗</button></>}
+              <div className="place-list-title"><span>All memories</span><span>{memories.length}</span></div>
+              <div className="memory-shelf">{savedPlacesWithMemories.length ? [...memories].sort((a,b)=>b.date.localeCompare(a.date)).map(memory=>{const place=places.find(p=>p.id===memory.placeId);if(!place)return null;return <button className="memory-sheet" key={memory.id} onClick={()=>{setTemporaryPreviewPlace(null);setTemporaryPin(null);setSelectedPlaceId(place.id);setSelectedMemoryId(memory.id);}} aria-label={`Open ${place.name}, ${memory.date}`}><div className="memory-photo">{memory.coverImage?<img src={memory.coverImage} alt="" onError={e=>{e.currentTarget.style.display='none';}}/>:<span>{place.name}</span>}</div><div className="memory-caption"><h2>{place.name}</h2><time>{memory.date}</time></div><p>{memory.note || 'Add a few words about this visit.'}</p><span className="memory-open">Open memory ↗</span></button>}) : <div className="archive-empty"><span>01</span><h2>Start with a place<br/>you remember.</h2><p>Add a photo, the date and a few words.</p><button className="atlas-primary" onClick={()=>{setManualInitialCoords(undefined);setManualInitialName('');setManualModalOpen(true);}}>Add your first memory</button><button className="atlas-secondary" onClick={handleToggleSample}>See example memories</button></div>}</div>
               <p className="atlas-storage-note">Saved on this browser, not in a cloud account. Use the same browser to return to your memories.</p>
             </aside>
             <div className="atlas-map">
