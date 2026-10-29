@@ -29,6 +29,8 @@ import { POPULAR_DESTINATIONS, REGION_COORDINATE_PRESETS } from './utils/geocodi
 import { AlertTriangle, Compass } from 'lucide-react';
 
 export default function App() {
+  const [notice, setNotice] = useState('');
+  useEffect(() => { if (!notice) return; const timer = setTimeout(() => setNotice(''), 4000); return () => clearTimeout(timer); }, [notice]);
   const [activeTab, setActiveTab] = useState<ActiveTab>('atlas');
   const [isSample, setIsSample] = useState<boolean>(() => isSampleActive());
 
@@ -94,6 +96,7 @@ export default function App() {
   const persistState = (newPlaces: Place[], newMemories: Memory[]) => {
     setPlaces(newPlaces);
     setMemories(newMemories);
+    setNotice(isSample ? 'Demo updated. Your personal memories are unchanged.' : 'Memory updated. Stored on this browser.');
     if (!isSample) {
       saveStoredPlaces(newPlaces);
       saveStoredMemories(newMemories);
@@ -478,7 +481,7 @@ export default function App() {
   const isPanelSaved = Boolean(currentSavedPlace && currentMemories.length > 0);
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#F7F2E7] text-[#2C2723] select-none">
+    <div className="atlas-shell flex flex-col w-full overflow-hidden bg-[#F6F5F0] text-[#262D2A]">
       {/* Top Application Header */}
       <Header
         activeTab={activeTab}
@@ -505,7 +508,18 @@ export default function App() {
       {/* Main Screen Body */}
       <main className="relative flex-1 w-full overflow-hidden flex flex-col">
         {activeTab === 'atlas' && (
-          <div className="relative w-full h-full flex flex-col items-center justify-center">
+          <div className="atlas-workspace">
+            <aside className="atlas-sidebar">
+              <span className="atlas-eyebrow">Places, people, passing moments</span>
+              <h1>Where the story stays.</h1>
+              <p>A photo keeps the view. Keep the date, the people, and the part you might forget.</p>
+              <button className="atlas-primary" onClick={() => {setManualInitialCoords(undefined);setManualInitialName('');setManualModalOpen(true);}}>+ Add a memory</button>
+              {isSample && <div className="atlas-demo-note">Demo atlas · Try the flows here. Changes to these examples are not saved.</div>}
+              <div className="place-list-title"><span>Saved places</span><span>{savedPlacesWithMemories.length}</span></div>
+              {savedPlacesWithMemories.length ? savedPlacesWithMemories.map(place => <button className="atlas-place-row" key={place.id} aria-pressed={selectedPlaceId===place.id} onClick={() => {setTemporaryPreviewPlace(null);setTemporaryPin(null);setSelectedPlaceId(place.id);const list=memories.filter(m=>m.placeId===place.id);setSelectedMemoryId(list.length===1?list[0].id:undefined);}}>{memories.find(m=>m.placeId===place.id && m.coverImage)?.coverImage ? <img className="place-thumb" src={memories.find(m=>m.placeId===place.id && m.coverImage)!.coverImage} alt=""/> : <span className="place-thumb place-initial">{place.name.slice(0,1)}</span>}<span><strong>{place.name}</strong><small>{place.country} · {memories.filter(m=>m.placeId===place.id).length} {memories.filter(m=>m.placeId===place.id).length===1?'memory':'memories'}</small></span></button>) : <><p>No memories yet. Start with one place and a moment you want to keep.</p><button className="atlas-secondary" style={{marginTop:12}} onClick={handleToggleSample}>Explore a demo atlas ↗</button></>}
+              <p className="atlas-storage-note">Saved on this browser, not in a cloud account. Use the same browser to return to your memories.</p>
+            </aside>
+            <div className="atlas-map">
             {/* Illustrated Globe Centerpiece (Only places with memories appear as permanent pins!) */}
             <IllustratedGlobe
               places={savedPlacesWithMemories}
@@ -522,20 +536,7 @@ export default function App() {
               className="absolute inset-0"
             />
 
-            {/* Floating Top Narrative & Search Bar */}
-            <div className="absolute top-6 left-6 right-6 z-20 pointer-events-none flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-              {/* Literary Headline */}
-              <div className="pointer-events-auto max-w-md bg-[#FAF5EB]/90 backdrop-blur-md px-5 py-3.5 rounded-2xl border border-[#DED4C0]/85 shadow-xs">
-                <h1 className="font-serif text-xl sm:text-2xl font-medium tracking-tight text-[#2B2621]">
-                  Where have your memories taken you?
-                </h1>
-                <p className="text-xs text-[#7A6F62] mt-0.5 leading-relaxed font-serif italic">
-                  Keep the places that became memories.
-                </p>
-              </div>
-
-              {/* Offline Search Field */}
-              <div className="pointer-events-auto w-full md:w-auto">
+            <div className="atlas-map-search"><div>
                 <PlaceSearch
                   savedPlaces={places}
                   memories={memories}
@@ -551,43 +552,10 @@ export default function App() {
               </div>
             </div>
 
-            {/* Floating Memory Counter Pill */}
-            {savedPlacesWithMemories.length > 0 && !activePanelPlace && (
-              <div className="absolute bottom-6 left-6 z-10 pointer-events-none hidden sm:block">
-                <div className="px-4 py-2 rounded-full bg-[#FAF5EB]/90 backdrop-blur-xs border border-[#DFD3BE] shadow-xs text-xs text-[#615648] flex items-center space-x-2">
-                  <Compass className="w-3.5 h-3.5 text-[#B45A42]" />
-                  <span className="font-serif">
-                    {savedPlacesWithMemories.length} saved place
-                    {savedPlacesWithMemories.length === 1 ? '' : 's'} · {memories.length} pinned memory
-                    {memories.length === 1 ? '' : 'ies'}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Empty State Overlay if user has no saved places */}
-            {savedPlacesWithMemories.length === 0 && !activePanelPlace && (
-              <div className="absolute bottom-10 left-6 z-20 pointer-events-auto">
-                <EmptyState
-                  onSearchFocus={() => {
-                    const input = document.getElementById(
-                      'place-search-input'
-                    ) as HTMLInputElement | null;
-                    input?.focus();
-                  }}
-                  onExploreSample={handleToggleSample}
-                  onManualAdd={() => {
-                    setManualInitialCoords(undefined);
-                    setManualInitialName('');
-                    setManualModalOpen(true);
-                  }}
-                />
-              </div>
-            )}
-
+            <p className="atlas-map-help">Drag to explore · Select a pin or a saved place</p>
             {/* Floating Memory Panel: State A (Search preview), State B (Place overview), State C (Memory view) */}
             {activePanelPlace && (
-              <div className="absolute top-24 right-6 bottom-10 z-30 pointer-events-auto flex items-start justify-end">
+              <div className="atlas-panel">
                 <MemoryPanel
                   place={activePanelPlace}
                   isSaved={isPanelSaved}
@@ -611,12 +579,13 @@ export default function App() {
                 />
               </div>
             )}
+            </div>
           </div>
         )}
 
         {/* Tab 2: Journeys */}
         {activeTab === 'journeys' && (
-          <div className="flex-1 overflow-y-auto bg-[#F7F2E7]">
+          <div className="flex-1 overflow-y-auto bg-[#F6F5F0]">
             <JourneysPlaceholder
               places={savedPlacesWithMemories}
               memories={memories}
@@ -632,7 +601,7 @@ export default function App() {
 
         {/* Tab 3: Postcards */}
         {activeTab === 'postcards' && (
-          <div className="flex-1 overflow-y-auto bg-[#F7F2E7]">
+          <div className="flex-1 overflow-y-auto bg-[#F6F5F0]">
             <PostcardsPlaceholder
               places={savedPlacesWithMemories}
               memories={memories}
@@ -648,14 +617,14 @@ export default function App() {
 
         {/* Tab 4: Plan Trip */}
         {activeTab === 'plan-trip' && (
-          <div className="flex-1 overflow-y-auto bg-[#F7F2E7]">
+          <div className="flex-1 overflow-y-auto bg-[#F6F5F0]">
             <PlanTripView onGoToAtlas={() => setActiveTab('atlas')} />
           </div>
         )}
 
         {/* Tab 5: Privacy */}
         {activeTab === 'privacy' && (
-          <div className="flex-1 overflow-y-auto bg-[#F7F2E7]">
+          <div className="flex-1 overflow-y-auto bg-[#F6F5F0]">
             <PrivacyView
               onBack={() => setActiveTab('atlas')}
               onClearAll={() => setShowClearConfirm(true)}
@@ -664,6 +633,7 @@ export default function App() {
         )}
       </main>
 
+      {notice && <div className="atlas-toast" role="status">{notice}</div>}
       {/* Manual Place Entry Modal */}
       {manualModalOpen && (
         <ManualAddModal
@@ -689,27 +659,27 @@ export default function App() {
       {/* Clear/Reset Confirmation Modal */}
       {showClearConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-2xs">
-          <div className="bg-[#FCFAF5] border border-[#DDD3BF] rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 duration-150">
-            <div className="w-10 h-10 rounded-full bg-[#F5D8D0] text-[#9E4F39] flex items-center justify-center mb-3">
+          <div className="bg-[#FFFFFF] border border-[#D8D7CE] rounded-xl p-6 max-w-md w-full shadow-2xl animate-in fade-in-50 duration-150">
+            <div className="w-10 h-10 rounded-full bg-[#F5D8D0] text-[#75523B] flex items-center justify-center mb-3">
               <AlertTriangle className="w-5 h-5" />
             </div>
-            <h3 className="font-serif text-xl font-medium text-[#2B2621]">
+            <h3 className="font-sans text-xl font-medium text-[#262D2A]">
               Clear all Little Atlas memories?
             </h3>
-            <p className="text-xs text-[#7A6F62] mt-2 leading-relaxed">
+            <p className="text-xs text-[#626B65] mt-2 leading-relaxed">
               This removes your locally stored places and memories from this browser. This action
               cannot be undone.
             </p>
             <div className="mt-5 flex justify-end space-x-2">
               <button
                 onClick={() => setShowClearConfirm(false)}
-                className="px-4 py-2 text-xs text-[#706456] hover:bg-[#EFE6D5] rounded-xl font-medium transition-colors"
+                className="px-4 py-2 text-xs text-[#626B65] hover:bg-[#EEECE5] rounded-xl font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleClearAll}
-                className="px-4 py-2 text-xs bg-[#9E4F39] text-white rounded-xl font-medium hover:bg-[#85412E] transition-colors"
+                className="px-4 py-2 text-xs bg-[#75523B] text-white rounded-xl font-medium hover:bg-[#523A29] transition-colors"
               >
                 Yes, clear local archive
               </button>

@@ -288,18 +288,18 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-6 text-[#2C2723]">
+    <div className="max-w-4xl mx-auto py-8 px-6 text-[#262D2A]">
       {/* Header & Section Title */}
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 border-b border-[#E3D9C4] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 border-b border-[#D8D7CE] pb-5">
         <div>
-          <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-wider text-[#9E4F39]">
+          <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-wider text-[#75523B]">
             <Compass className="w-4 h-4" />
             <span>Itinerary Curator</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-medium text-[#2B2621] mt-1 tracking-tight">
+          <h1 className="font-sans text-3xl sm:text-4xl font-medium text-[#262D2A] mt-1 tracking-tight">
             Plan your next little adventure.
           </h1>
-          <p className="text-sm text-[#73685C] mt-1.5 font-serif italic">
+          <p className="text-sm text-[#626B65] mt-1.5 font-sans">
             “Tell Little Atlas where you’re going and how you want the trip to feel.”
           </p>
         </div>
@@ -311,8 +311,8 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
               onClick={() => setActiveViewMode('create')}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 activeViewMode === 'create'
-                  ? 'bg-[#EAE0CD] text-[#2B2621] shadow-2xs'
-                  : 'text-[#7B7063] hover:text-[#2B2621]'
+                  ? 'bg-[#EEECE5] text-[#262D2A] shadow-2xs'
+                  : 'text-[#626B65] hover:text-[#262D2A]'
               }`}
             >
               Plan View
@@ -321,13 +321,13 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
               onClick={() => setActiveViewMode('saved')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 activeViewMode === 'saved'
-                  ? 'bg-[#EAE0CD] text-[#2B2621] shadow-2xs'
-                  : 'text-[#7B7063] hover:text-[#2B2621]'
+                  ? 'bg-[#EEECE5] text-[#262D2A] shadow-2xs'
+                  : 'text-[#626B65] hover:text-[#262D2A]'
               }`}
             >
-              <BookmarkCheck className="w-3.5 h-3.5 text-[#9E4F39]" />
+              <BookmarkCheck className="w-3.5 h-3.5 text-[#75523B]" />
               <span>Saved Plans</span>
-              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-[#DED2BD] text-[#4A4035]">
+              <span className="ml-1 text-[10px] px-1.5 py-0.2 rounded-full bg-[#DED2BD] text-[#626B65]">
                 {savedPlans.length}
               </span>
             </button>
@@ -339,12 +339,12 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
       {activeViewMode === 'saved' && (
         <div className="mt-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-serif text-2xl font-medium text-[#2B2621]">
+            <h2 className="font-sans text-2xl font-medium text-[#262D2A]">
               Saved Plans
             </h2>
             <button
               onClick={() => setActiveViewMode('create')}
-              className="text-xs font-medium text-[#9E4F39] hover:underline flex items-center space-x-1"
+              className="text-xs font-medium text-[#75523B] hover:underline flex items-center space-x-1"
             >
               <span>Create new plan</span>
               <ArrowRight className="w-3 h-3" />
@@ -356,15 +356,15 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
               <div
                 key={plan.id}
                 onClick={() => handleSelectSavedPlan(plan)}
-                className="group relative bg-[#FAF6EE] border border-[#E2D7C2] hover:border-[#C4B79F] rounded-2xl p-5 shadow-2xs hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between"
+                className="group relative bg-[#FFFFFF] border border-[#D8D7CE] hover:border-[#D8D7CE] rounded-xl p-5 shadow-2xs hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="font-serif text-xl font-medium text-[#2B2621] group-hover:text-[#9E4F39] transition-colors">
+                      <h3 className="font-sans text-xl font-medium text-[#262D2A] group-hover:text-[#75523B] transition-colors">
                         {plan.destination}
                       </h3>
-                      <p className="text-xs text-[#7A6F62] mt-0.5 font-sans">
+                      <p className="text-xs text-[#626B65] mt-0.5 font-sans">
                         {plan.daysCount} {plan.daysCount === 1 ? 'day' : 'days'} •{' '}
                         <span className="capitalize">{plan.pace} pace</span>
                       </p>
@@ -376,7 +376,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                       className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border transition-all ${
                         plan.isUpcoming
                           ? 'bg-[#E7D6C0] border-[#CBB89E] text-[#4A3C2D] font-semibold'
-                          : 'bg-transparent border-[#D8CCB5] text-[#8C8071] hover:border-[#BFAF98]'
+                          : 'bg-transparent border-[#D8D7CE] text-[#626B65] hover:border-[#BFAF98]'
                       }`}
                       title="Click to toggle upcoming badge"
                     >
@@ -385,25 +385,25 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                   </div>
 
                   {plan.overview && (
-                    <p className="text-xs text-[#706456] mt-3 line-clamp-2 italic font-serif leading-relaxed">
+                    <p className="text-xs text-[#626B65] mt-3 line-clamp-2 font-sans leading-relaxed">
                       “{plan.overview}”
                     </p>
                   )}
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-[#EFE5D3] flex items-center justify-between text-xs text-[#8A7D6E]">
+                <div className="mt-5 pt-3 border-t border-[#EEECE5] flex items-center justify-between text-xs text-[#8A7D6E]">
                   <span className="font-sans text-[11px]">
                     {formatSavedDate(plan.createdAt)}
                   </span>
                   <div className="flex items-center space-x-1.5">
                     <button
                       onClick={(e) => handleDeletePlan(plan.id, e)}
-                      className="p-1.5 rounded-md hover:bg-[#F3E2DC] text-[#8C7F72] hover:text-[#9E4F39] transition-colors"
+                      className="p-1.5 rounded-md hover:bg-[#F3E2DC] text-[#626B65] hover:text-[#75523B] transition-colors"
                       title="Delete saved plan"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                    <span className="text-[#9E4F39] font-medium flex items-center group-hover:translate-x-0.5 transition-transform text-xs">
+                    <span className="text-[#75523B] font-medium flex items-center group-hover:translate-x-0.5 transition-transform text-xs">
                       View itinerary &rarr;
                     </span>
                   </div>
@@ -421,19 +421,19 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
           {!currentPlan && (
             <form
               onSubmit={handleCreateTrip}
-              className="bg-[#FAF6EE] border border-[#E2D7C2] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6"
+              className="bg-[#FFFFFF] border border-[#D8D7CE] rounded-xl p-6 sm:p-8 shadow-xs space-y-6"
             >
               {/* Destination & Days Row */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="destination-input"
-                    className="block text-xs font-medium uppercase tracking-wider text-[#5A5043] mb-1.5"
+                    className="block text-xs font-medium uppercase tracking-wider text-[#626B65] mb-1.5"
                   >
-                    Destination <span className="text-[#9E4F39]">*</span>
+                    Destination <span className="text-[#75523B]">*</span>
                   </label>
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-[#8C7F70] absolute left-3.5 top-3" />
+                    <MapPin className="w-4 h-4 text-[#626B65] absolute left-3.5 top-3" />
                     <input
                       id="destination-input"
                       type="text"
@@ -441,7 +441,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
                       placeholder="e.g. Tokyo, Kyoto, Lisbon, Oaxaca, Copenhagen..."
-                      className="w-full bg-[#FCFAF5] border border-[#D5C7B0] focus:border-[#9E4F39] focus:outline-none rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#2B2621] placeholder-[#A59988] transition-colors shadow-2xs font-sans"
+                      className="w-full bg-[#FFFFFF] border border-[#D8D7CE] focus:border-[#75523B] focus:outline-none rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#262D2A] placeholder-[#69716B] transition-colors shadow-2xs font-sans"
                     />
                   </div>
                 </div>
@@ -449,12 +449,12 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                 <div>
                   <label
                     htmlFor="days-input"
-                    className="block text-xs font-medium uppercase tracking-wider text-[#5A5043] mb-1.5"
+                    className="block text-xs font-medium uppercase tracking-wider text-[#626B65] mb-1.5"
                   >
-                    Number of days <span className="text-[#9E4F39]">*</span>
+                    Number of days <span className="text-[#75523B]">*</span>
                   </label>
                   <div className="relative">
-                    <Calendar className="w-4 h-4 text-[#8C7F70] absolute left-3.5 top-3" />
+                    <Calendar className="w-4 h-4 text-[#626B65] absolute left-3.5 top-3" />
                     <input
                       id="days-input"
                       type="number"
@@ -465,7 +465,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                       onChange={(e) =>
                         setDaysCount(Math.max(1, Math.min(14, parseInt(e.target.value) || 1)))
                       }
-                      className="w-full bg-[#FCFAF5] border border-[#D5C7B0] focus:border-[#9E4F39] focus:outline-none rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#2B2621] transition-colors shadow-2xs font-sans"
+                      className="w-full bg-[#FFFFFF] border border-[#D8D7CE] focus:border-[#75523B] focus:outline-none rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#262D2A] transition-colors shadow-2xs font-sans"
                     />
                   </div>
                 </div>
@@ -473,7 +473,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
 
               {/* Travel Pace */}
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-[#5A5043] mb-2">
+                <label className="block text-xs font-medium uppercase tracking-wider text-[#626B65] mb-2">
                   Travel pace
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -490,14 +490,14 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                       onClick={() => setPace(option.id)}
                       className={`text-left p-3.5 rounded-xl border transition-all ${
                         pace === option.id
-                          ? 'bg-[#EDE2CD] border-[#B8A48B] text-[#2B2621] shadow-2xs'
-                          : 'bg-[#FCFAF5] border-[#DCD0BB] text-[#695D4F] hover:border-[#C4B69E]'
+                          ? 'bg-[#EEECE5] border-[#69716B] text-[#262D2A] shadow-2xs'
+                          : 'bg-[#FFFFFF] border-[#DCD0BB] text-[#695D4F] hover:border-[#C4B69E]'
                       }`}
                     >
-                      <div className="font-serif text-sm font-medium text-[#2B2621]">
+                      <div className="font-sans text-sm font-medium text-[#262D2A]">
                         {option.title}
                       </div>
-                      <p className="text-[11px] text-[#7A6F62] mt-0.5 font-sans leading-tight">
+                      <p className="text-[11px] text-[#626B65] mt-0.5 font-sans leading-tight">
                         {option.desc}
                       </p>
                     </button>
@@ -507,7 +507,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
 
               {/* Interests Multi-Select */}
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-[#5A5043] mb-2">
+                <label className="block text-xs font-medium uppercase tracking-wider text-[#626B65] mb-2">
                   Interests
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -520,8 +520,8 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                         onClick={() => toggleInterest(interest)}
                         className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all ${
                           selected
-                            ? 'bg-[#9E4F39] text-[#FAF6EE] shadow-2xs'
-                            : 'bg-[#FCFAF5] border border-[#D5C7B0] text-[#635749] hover:bg-[#F2EADA]'
+                            ? 'bg-[#75523B] text-[#FFFFFF] shadow-2xs'
+                            : 'bg-[#FFFFFF] border border-[#D8D7CE] text-[#626B65] hover:bg-[#EEECE5]'
                         }`}
                       >
                         {selected && <Check className="w-3 h-3" />}
@@ -534,7 +534,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
 
               {/* Budget */}
               <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-[#5A5043] mb-2">
+                <label className="block text-xs font-medium uppercase tracking-wider text-[#626B65] mb-2">
                   Budget
                 </label>
                 <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -545,8 +545,8 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                       onClick={() => setBudget(b)}
                       className={`capitalize px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                         budget === b
-                          ? 'bg-[#EDE2CD] border border-[#B8A48B] text-[#2B2621] shadow-2xs'
-                          : 'bg-[#FCFAF5] border border-[#D5C7B0] text-[#6B5F51] hover:bg-[#F2EADA]'
+                          ? 'bg-[#EEECE5] border border-[#69716B] text-[#262D2A] shadow-2xs'
+                          : 'bg-[#FFFFFF] border border-[#D8D7CE] text-[#626B65] hover:bg-[#EEECE5]'
                       }`}
                     >
                       {b}
@@ -559,9 +559,9 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
               <div>
                 <label
                   htmlFor="preferences-input"
-                  className="block text-xs font-medium uppercase tracking-wider text-[#5A5043] mb-1.5"
+                  className="block text-xs font-medium uppercase tracking-wider text-[#626B65] mb-1.5"
                 >
-                  Additional preferences <span className="text-[#8C8071] font-normal lowercase">(optional)</span>
+                  Additional preferences <span className="text-[#626B65] font-normal lowercase">(optional)</span>
                 </label>
                 <textarea
                   id="preferences-input"
@@ -569,7 +569,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                   value={additionalPreferences}
                   onChange={(e) => setAdditionalPreferences(e.target.value)}
                   placeholder="I like omakase, quiet neighborhoods, design stores, and I don’t want too many tourist attractions."
-                  className="w-full bg-[#FCFAF5] border border-[#D5C7B0] focus:border-[#9E4F39] focus:outline-none rounded-xl p-3.5 text-xs text-[#2B2621] placeholder-[#A59988] transition-colors shadow-2xs font-sans leading-relaxed"
+                  className="w-full bg-[#FFFFFF] border border-[#D8D7CE] focus:border-[#75523B] focus:outline-none rounded-xl p-3.5 text-xs text-[#262D2A] placeholder-[#69716B] transition-colors shadow-2xs font-sans leading-relaxed"
                 />
               </div>
 
@@ -578,13 +578,13 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#B45A42] hover:bg-[#9B452F] text-[#FAF6EE] font-serif text-sm font-medium tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#75523B] hover:bg-[#523A29] text-[#FFFFFF] font-sans text-sm font-medium tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>Create My Trip</span>
                 </button>
 
-                <p className="text-[11px] text-[#8C8071] font-serif italic text-center sm:text-right">
+                <p className="text-[11px] text-[#626B65] font-sans text-center sm:text-right">
                   Curated with care for your personal travel archive.
                 </p>
               </div>
@@ -594,13 +594,13 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
           {/* Calm Loading State */}
           {isLoading && (
             <div className="py-16 text-center space-y-3 animate-in fade-in duration-300">
-              <div className="w-12 h-12 rounded-full bg-[#EDE3D0] border border-[#D5C6AC] flex items-center justify-center mx-auto text-[#9E4F39]">
+              <div className="w-12 h-12 rounded-full bg-[#EEECE5] border border-[#D8D7CE] flex items-center justify-center mx-auto text-[#75523B]">
                 <Compass className="w-6 h-6 animate-spin duration-1000" style={{ animationDuration: '4s' }} />
               </div>
-              <h3 className="font-serif text-lg text-[#2B2621] font-medium">
+              <h3 className="font-sans text-lg text-[#262D2A] font-medium">
                 {loadingMessage}
               </h3>
-              <p className="text-xs text-[#7A6F62] font-serif italic max-w-xs mx-auto">
+              <p className="text-xs text-[#626B65] font-sans max-w-xs mx-auto">
                 Finding charming neighborhoods, cozy coffee stops, and gentle afternoon walks...
               </p>
             </div>
@@ -608,17 +608,17 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
 
           {/* Error Message */}
           {errorMessage && (
-            <div className="p-5 rounded-2xl bg-[#F8EDE8] border border-[#E9CFC7] text-[#8C3E2D] flex items-start space-x-3.5">
-              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-[#9E4F39]" />
+            <div className="p-5 rounded-xl bg-[#F8EDE8] border border-[#E9CFC7] text-[#523A29] flex items-start space-x-3.5">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-[#75523B]" />
               <div className="flex-1 text-xs leading-relaxed">
-                <p className="font-medium text-sm text-[#7D3425]">{errorMessage}</p>
-                <p className="text-[#8C3E2D] mt-1">
+                <p className="font-medium text-sm text-[#523A29]">{errorMessage}</p>
+                <p className="text-[#523A29] mt-1">
                   You can try refreshing or adjusting your destination request.
                 </p>
               </div>
               <button
                 onClick={() => setErrorMessage(null)}
-                className="text-xs text-[#7D3425] hover:underline font-medium"
+                className="text-xs text-[#523A29] hover:underline font-medium"
               >
                 Dismiss
               </button>
@@ -629,16 +629,16 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
           {currentPlan && !isLoading && (
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Trip Overview Bar */}
-              <div className="bg-[#FAF6EE] border border-[#E2D7C2] rounded-2xl p-6 sm:p-7 shadow-xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE0CD] pb-4">
+              <div className="bg-[#FFFFFF] border border-[#D8D7CE] rounded-xl p-6 sm:p-7 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EEECE5] pb-4">
                   <div>
-                    <span className="text-[11px] font-mono uppercase tracking-widest text-[#9E4F39] font-medium">
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-[#75523B] font-medium">
                       Curated Itinerary
                     </span>
-                    <h2 className="font-serif text-3xl font-medium text-[#2B2621] mt-0.5">
+                    <h2 className="font-sans text-3xl font-medium text-[#262D2A] mt-0.5">
                       {currentPlan.destination}
                     </h2>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#706456] mt-1">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#626B65] mt-1">
                       <span>{currentPlan.daysCount} days</span>
                       <span>•</span>
                       <span className="capitalize">{currentPlan.pace} pace</span>
@@ -657,15 +657,15 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                   <div className="flex items-center space-x-2.5 shrink-0">
                     <button
                       onClick={handleSavePlan}
-                      className={`flex items-center space-x-1.5 px-4 py-2 rounded-full text-xs font-serif font-medium transition-all shadow-2xs ${
+                      className={`flex items-center space-x-1.5 px-4 py-2 rounded-full text-xs font-sans font-medium transition-all shadow-2xs ${
                         isSaved
-                          ? 'bg-[#E3D8C3] text-[#3D3327] border border-[#C6B69C]'
-                          : 'bg-[#B45A42] hover:bg-[#9B452F] text-[#FAF6EE]'
+                          ? 'bg-[#E3D8C3] text-[#262D2A] border border-[#C6B69C]'
+                          : 'bg-[#75523B] hover:bg-[#523A29] text-[#FFFFFF]'
                       }`}
                     >
                       {isSaved ? (
                         <>
-                          <Check className="w-3.5 h-3.5 text-[#3D3327]" />
+                          <Check className="w-3.5 h-3.5 text-[#262D2A]" />
                           <span>Saved in Journal</span>
                         </>
                       ) : (
@@ -678,7 +678,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
 
                     <button
                       onClick={handleStartFresh}
-                      className="px-3.5 py-2 rounded-full border border-[#D5C7B0] hover:bg-[#EFE6D5] text-[#6B5F51] text-xs font-serif transition-colors"
+                      className="px-3.5 py-2 rounded-full border border-[#D8D7CE] hover:bg-[#EEECE5] text-[#626B65] text-xs font-sans transition-colors"
                       title="Create a new trip plan"
                     >
                       New Plan
@@ -687,7 +687,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                 </div>
 
                 {currentPlan.overview && (
-                  <p className="text-sm font-serif italic text-[#635749] mt-4 leading-relaxed">
+                  <p className="text-sm font-sans text-[#626B65] mt-4 leading-relaxed">
                     “{currentPlan.overview}”
                   </p>
                 )}
@@ -698,20 +698,20 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                 {currentPlan.days.map((day: DayItinerary, idx: number) => (
                   <div
                     key={day.dayNumber || idx + 1}
-                    className="relative bg-[#FCFAF5] border border-[#E3D9C5] rounded-2xl p-6 sm:p-7 shadow-2xs hover:border-[#D0C2A8] transition-colors"
+                    className="relative bg-[#FFFFFF] border border-[#E3D9C5] rounded-xl p-6 sm:p-7 shadow-2xs hover:border-[#D0C2A8] transition-colors"
                   >
                     {/* Header: Day number & Area */}
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 border-b border-[#EFE7D8] pb-3 mb-5">
                       <div className="flex items-baseline space-x-3">
-                        <span className="font-handwriting text-2xl text-[#9E4F39] font-bold">
+                        <span className="font-sans text-2xl text-[#75523B] font-bold">
                           Day {day.dayNumber || idx + 1}
                         </span>
-                        <h3 className="font-serif text-xl sm:text-2xl font-medium text-[#2B2621]">
+                        <h3 className="font-sans text-xl sm:text-2xl font-medium text-[#262D2A]">
                           {day.neighborhoodOrArea}
                         </h3>
                       </div>
                       {day.theme && (
-                        <span className="text-xs font-serif italic text-[#786E64]">
+                        <span className="text-xs font-sans text-[#626B65]">
                           {day.theme}
                         </span>
                       )}
@@ -721,11 +721,11 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 text-xs leading-relaxed">
                       {/* Morning */}
                       <div className="space-y-1">
-                        <div className="flex items-center space-x-1.5 text-[#9E4F39] font-medium tracking-wide uppercase text-[11px]">
+                        <div className="flex items-center space-x-1.5 text-[#75523B] font-medium tracking-wide uppercase text-[11px]">
                           <Sun className="w-3.5 h-3.5" />
                           <span>Morning</span>
                         </div>
-                        <p className="text-[#3D352E] font-sans pl-5 leading-normal">
+                        <p className="text-[#262D2A] font-sans pl-5 leading-normal">
                           {day.morning}
                         </p>
                       </div>
@@ -736,7 +736,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                           <Utensils className="w-3.5 h-3.5" />
                           <span>Lunch</span>
                         </div>
-                        <p className="text-[#3D352E] font-sans pl-5 leading-normal">
+                        <p className="text-[#262D2A] font-sans pl-5 leading-normal">
                           {day.lunch}
                         </p>
                       </div>
@@ -747,7 +747,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                           <Coffee className="w-3.5 h-3.5" />
                           <span>Afternoon</span>
                         </div>
-                        <p className="text-[#3D352E] font-sans pl-5 leading-normal">
+                        <p className="text-[#262D2A] font-sans pl-5 leading-normal">
                           {day.afternoon}
                         </p>
                       </div>
@@ -758,7 +758,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                           <Moon className="w-3.5 h-3.5" />
                           <span>Evening</span>
                         </div>
-                        <p className="text-[#3D352E] font-sans pl-5 leading-normal">
+                        <p className="text-[#262D2A] font-sans pl-5 leading-normal">
                           {day.evening}
                         </p>
                       </div>
@@ -766,8 +766,8 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
 
                     {/* Optional Day Note */}
                     {day.notes && (
-                      <div className="mt-4 pt-3 border-t border-[#F2EBDE] text-[11px] text-[#7A6F62] italic font-serif flex items-start space-x-2">
-                        <span className="text-[#9E4F39] font-handwriting text-base leading-none">
+                      <div className="mt-4 pt-3 border-t border-[#F2EBDE] text-[11px] text-[#626B65] font-sans flex items-start space-x-2">
+                        <span className="text-[#75523B] font-sans text-base leading-none">
                           Note:
                         </span>
                         <span>{day.notes}</span>
@@ -778,18 +778,18 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
               </div>
 
               {/* Subtle Disclaimer Note (Requirement 7) */}
-              <p className="text-[11px] text-[#8C8071] text-center font-serif italic py-1">
+              <p className="text-[11px] text-[#626B65] text-center font-sans py-1">
                 Suggestions may change over time. Check current hours and reservations before your trip.
               </p>
 
               {/* CHAT / REVISION AREA (Requirement 8 & 9) */}
-              <div className="bg-[#FAF6EE] border border-[#E2D7C2] rounded-2xl p-6 shadow-xs space-y-4">
-                <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-wider text-[#5A5043]">
-                  <RotateCcw className="w-3.5 h-3.5 text-[#9E4F39]" />
+              <div className="bg-[#FFFFFF] border border-[#D8D7CE] rounded-xl p-6 shadow-xs space-y-4">
+                <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-wider text-[#626B65]">
+                  <RotateCcw className="w-3.5 h-3.5 text-[#75523B]" />
                   <span>Adjust your trip</span>
                 </div>
 
-                <p className="text-xs text-[#7A6F62] leading-relaxed">
+                <p className="text-xs text-[#626B65] leading-relaxed">
                   Ask to soften a busy afternoon, swap out activities, or tailor neighborhoods. Your unchanged days will be preserved.
                 </p>
 
@@ -806,7 +806,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                       type="button"
                       onClick={() => handleReviseTrip(undefined, quick.replace('…', ''))}
                       disabled={isRevising}
-                      className="text-[11px] font-sans px-3 py-1 rounded-full bg-[#FCFAF5] border border-[#D8CCB5] text-[#665A4C] hover:border-[#9E4F39] hover:text-[#2B2621] transition-all disabled:opacity-50"
+                      className="text-[11px] font-sans px-3 py-1 rounded-full bg-[#FFFFFF] border border-[#D8D7CE] text-[#665A4C] hover:border-[#75523B] hover:text-[#262D2A] transition-all disabled:opacity-50"
                     >
                       {quick}
                     </button>
@@ -824,12 +824,12 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                     onChange={(e) => setRevisionInput(e.target.value)}
                     disabled={isRevising}
                     placeholder="e.g. Make Day 2 more relaxed, or add a vintage bookshop visit..."
-                    className="flex-1 bg-[#FCFAF5] border border-[#D5C7B0] focus:border-[#9E4F39] focus:outline-none rounded-xl px-4 py-2.5 text-xs text-[#2B2621] placeholder-[#9E9281] shadow-2xs transition-colors font-sans"
+                    className="flex-1 bg-[#FFFFFF] border border-[#D8D7CE] focus:border-[#75523B] focus:outline-none rounded-xl px-4 py-2.5 text-xs text-[#262D2A] placeholder-[#9E9281] shadow-2xs transition-colors font-sans"
                   />
                   <button
                     type="submit"
                     disabled={isRevising || !revisionInput.trim()}
-                    className="px-4 py-2.5 rounded-xl bg-[#9E4F39] hover:bg-[#85412E] text-[#FAF6EE] text-xs font-medium transition-colors shadow-2xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5 shrink-0"
+                    className="px-4 py-2.5 rounded-xl bg-[#75523B] hover:bg-[#523A29] text-[#FFFFFF] text-xs font-medium transition-colors shadow-2xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1.5 shrink-0"
                   >
                     {isRevising ? (
                       <span className="animate-pulse">Updating…</span>
@@ -843,7 +843,7 @@ export const PlanTripView: React.FC<PlanTripViewProps> = () => {
                 </form>
 
                 {isRevising && (
-                  <p className="text-[11px] text-[#9E4F39] font-serif italic text-center animate-pulse">
+                  <p className="text-[11px] text-[#75523B] font-sans text-center animate-pulse">
                     Updating your journey…
                   </p>
                 )}

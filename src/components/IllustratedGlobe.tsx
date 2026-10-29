@@ -51,7 +51,7 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
   } | null>(null);
 
   const [hoveredPlace, setHoveredPlace] = useState<Place | null>(null);
-  const [autoRotate, setAutoRotate] = useState(true);
+  const [autoRotate, setAutoRotate] = useState(false);
 
   // Smoothly center globe when selectedPlaceId changes
   useEffect(() => {
@@ -185,8 +185,8 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
       cy + radius * 0.96,
       radius * 0.85
     );
-    shadowGrad.addColorStop(0, 'rgba(58, 48, 38, 0.16)');
-    shadowGrad.addColorStop(0.5, 'rgba(58, 48, 38, 0.07)');
+    shadowGrad.addColorStop(0, 'rgba(58, 48, 38, 0.05)');
+    shadowGrad.addColorStop(0.5, 'rgba(58, 48, 38, 0.02)');
     shadowGrad.addColorStop(1, 'rgba(58, 48, 38, 0)');
     ctx.fillStyle = shadowGrad;
     ctx.fill();
@@ -195,8 +195,8 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx, cy, radius + 14, 0, Math.PI * 2);
-    ctx.strokeStyle = '#D6C9B3';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#D8D7CE';
+    ctx.lineWidth = 0.8;
     ctx.setLineDash([3, 5]);
     ctx.stroke();
     ctx.setLineDash([]);
@@ -211,7 +211,7 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = '#C5B59E';
+      ctx.strokeStyle = '#D8D7CE';
       ctx.lineWidth = 1;
       ctx.stroke();
     }
@@ -228,9 +228,9 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
       cy,
       radius
     );
-    oceanGrad.addColorStop(0, '#C2D4DF'); // Soft sunlit dusty blue
-    oceanGrad.addColorStop(0.65, '#AFC4D1'); // Natural dusty blue ocean
-    oceanGrad.addColorStop(1, '#97AFC0'); // Edge depth
+    oceanGrad.addColorStop(0, '#F0F1EA'); // Soft sunlit dusty blue
+    oceanGrad.addColorStop(0.65, '#E7EBE3'); // Natural dusty blue ocean
+    oceanGrad.addColorStop(1, '#D5DDD4'); // Edge depth
     ctx.fillStyle = oceanGrad;
     ctx.fill();
 
@@ -267,12 +267,12 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
     ctx.beginPath();
     path(landGeoJson);
     // Fill: muted olive/sage
-    ctx.fillStyle = '#CAD5BE';
+    ctx.fillStyle = '#FBFAF5';
     ctx.fill();
 
-    // Stroke: dark hand-drawn style outline (#36312B)
-    ctx.strokeStyle = '#36312B';
-    ctx.lineWidth = 1.5;
+    // Stroke: dark hand-drawn style outline (#262D2A)
+    ctx.strokeStyle = '#262D2A';
+    ctx.lineWidth = 0.8;
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     ctx.stroke();
@@ -297,7 +297,7 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
 
         ctx.beginPath();
         path(routeGeoJson);
-        ctx.strokeStyle = '#B85D43';
+        ctx.strokeStyle = '#75523B';
         ctx.lineWidth = 1.8;
         ctx.setLineDash([4, 4]);
         ctx.stroke();
@@ -327,7 +327,7 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
     // 8. Hand-drawn Globe Rim Outer Stroke
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = '#332D27';
+    ctx.strokeStyle = '#262D2A';
     ctx.lineWidth = 2.2;
     ctx.stroke();
 
@@ -378,16 +378,16 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
       const pinRadius = isSelected ? 7 : isHovered ? 6 : 5;
       ctx.beginPath();
       ctx.arc(px, py, pinRadius, 0, Math.PI * 2);
-      ctx.fillStyle = isSelected ? '#A84C32' : '#C26D53';
+      ctx.fillStyle = isSelected ? '#75523B' : '#75523B';
       ctx.fill();
-      ctx.strokeStyle = '#FAF6EE';
+      ctx.strokeStyle = '#FFFFFF';
       ctx.lineWidth = 1.8;
       ctx.stroke();
 
       // Inner white star / core dot
       ctx.beginPath();
       ctx.arc(px, py, pinRadius * 0.35, 0, Math.PI * 2);
-      ctx.fillStyle = '#FAF6EE';
+      ctx.fillStyle = '#FFFFFF';
       ctx.fill();
 
       // Editorial Memory Label (Shown when selected or hovered)
@@ -426,15 +426,15 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
         ctx.quadraticCurveTo(boxX, boxY, boxX + r, boxY);
         ctx.closePath();
 
-        ctx.fillStyle = '#FAF5EB';
+        ctx.fillStyle = '#FFFFFF';
         ctx.fill();
-        ctx.strokeStyle = '#D8CCA8';
+        ctx.strokeStyle = '#D8D7CE';
         ctx.lineWidth = 1;
         ctx.stroke();
         ctx.restore();
 
         // Text
-        ctx.fillStyle = '#2C2723';
+        ctx.fillStyle = '#262D2A';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(labelText, px, boxY + boxH / 2);
@@ -456,8 +456,8 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
           // Dashed concentric preview ring
           ctx.beginPath();
           ctx.arc(px, py, 11, 0, Math.PI * 2);
-          ctx.strokeStyle = '#B45A42';
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = '#75523B';
+          ctx.lineWidth = 0.8;
           ctx.setLineDash([3, 3]);
           ctx.stroke();
           ctx.setLineDash([]);
@@ -465,9 +465,9 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
           // Center preview dot
           ctx.beginPath();
           ctx.arc(px, py, 4, 0, Math.PI * 2);
-          ctx.fillStyle = '#B45A42';
+          ctx.fillStyle = '#75523B';
           ctx.fill();
-          ctx.strokeStyle = '#FAF6EE';
+          ctx.strokeStyle = '#FFFFFF';
           ctx.lineWidth = 1.2;
           ctx.stroke();
 
@@ -482,7 +482,7 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
 
           ctx.save();
           ctx.fillStyle = 'rgba(250, 246, 238, 0.95)';
-          ctx.strokeStyle = '#C26D53';
+          ctx.strokeStyle = '#75523B';
           ctx.lineWidth = 1;
           ctx.beginPath();
           // Rounded rect
@@ -500,7 +500,7 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
           ctx.fill();
           ctx.stroke();
 
-          ctx.fillStyle = '#7D3827';
+          ctx.fillStyle = '#523A29';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(labelText, px, boxY + boxH / 2);
@@ -691,10 +691,10 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
       <div className="absolute bottom-6 right-6 z-10 flex items-center space-x-2">
         <button
           onClick={toggleAutoSpin}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-serif transition-colors border shadow-xs ${
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-sans transition-colors border shadow-xs ${
             autoRotate
-              ? 'bg-[#EAE1D2] border-[#D6C7B2] text-[#42372C]'
-              : 'bg-[#FAF6EE]/80 border-[#E2D8C5] text-[#7A6F62] hover:bg-[#FAF6EE]'
+              ? 'bg-[#EEECE5] border-[#D8D7CE] text-[#42372C]'
+              : 'bg-[#FFFFFF]/80 border-[#D8D7CE] text-[#626B65] hover:bg-[#FFFFFF]'
           }`}
           title={autoRotate ? 'Pause globe drift' : 'Start gentle drift'}
         >
@@ -709,9 +709,9 @@ export const IllustratedGlobe: React.FC<IllustratedGlobeProps> = ({
       {/* Little Illustrated Compass Rose Accent */}
       <div className="absolute top-6 left-6 pointer-events-none opacity-40 hover:opacity-80 transition-opacity hidden md:block">
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-serif font-bold text-[#8C7D6B] mb-0.5">N</span>
+          <span className="text-[10px] font-sans font-bold text-[#8C7D6B] mb-0.5">N</span>
           <div className="w-6 h-6 border border-[#BFAFA0] rounded-full flex items-center justify-center">
-            <div className="w-1 h-3 bg-[#A84C32] rounded-xs -mt-1"></div>
+            <div className="w-1 h-3 bg-[#75523B] rounded-xs -mt-1"></div>
           </div>
         </div>
       </div>
